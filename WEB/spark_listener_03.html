@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+    <span id="analogVal"></span><br>
+    <span id="tstamp"></span><br>
+    <span id="axspan"></span>
+
+    <br><br>
+    <button onclick="start()">Connect</button>
+
+    <script type="text/javascript">
+    function start() {
+
+        document.getElementById("analogVal").innerHTML = "Waiting for data...";
+        var deviceID = "53ff6e066667574847262367";
+        var accessToken = "1ffad714fd325c9b78e3aa48534e5afd245b0ba9";
+        var eventSource = new EventSource("https://api.spark.io/v1/devices/" + deviceID + "/events/?access_token=" + accessToken);
+
+        eventSource.addEventListener('open', function(e) {
+            console.log("Opened!"); },false);
+
+        eventSource.addEventListener('error', function(e) {
+            console.log("Errored!"); },false);
+
+        eventSource.addEventListener('analogVal', function(e) {
+            var parsedData = JSON.parse(e.data);
+            var tempSpan = document.getElementById("analogVal");
+            var tsSpan   = document.getElementById("tstamp");
+            tempSpan.innerHTML = "Core: " + parsedData.coreid + " analogVal: " + parsedData.data;
+            tempSpan.style.fontSize = "28px";
+            tsSpan.innerHTML = "At timestamp " + parsedData.published_at;
+            tsSpan.style.fontSize = "28px";
+            var analogVal = parseInt(parsedData.data, 10);
+            var colorRed = analogVal
+            var colorBlue = 255 - analogVal;
+            var colorGreen = 0;
+            var rgb = [colorRed, colorGreen, colorBlue];
+            var hexColor = num2hex(rgb);
+            document.bgColor = hexColor;
+            tsSpan.innerHTML = hexColor;
+        }, false);
+
+        eventSource.addEventListener('ax', function(e){
+            var parsedAcc = JSON.parse(e.data);
+            var ax = document.getElementById("axspan");
+            axspan.innerHTML = parsedAcc.data;
+            axspan. style.fontSize="48px";
+        },false);
+    }
+
+    function num2hex(triplet) {
+    var hex_alphabets = "0123456789ABCDEF";
+    var hex = "#";
+    var int1,int2;
+    for(var i=0;i<3;i++) {
+        int1 = triplet[i] / 16;
+        int2 = triplet[i] % 16;
+
+        hex += hex_alphabets.charAt(int1) + hex_alphabets.charAt(int2); 
+    }
+    return(hex);
+}
+    </script>
+</body>
+</html>

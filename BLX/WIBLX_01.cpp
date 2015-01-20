@@ -16,7 +16,7 @@ Copyright (c) 2011 Jeff Rowberg
 #define PIXEL_TYPE WS2812B
 #define LED_PIN D4
 
-#define DEBUG
+//#define DEBUG
 
 #include "I2Cdev.h"
 #include "MPU6050.h"
@@ -42,11 +42,11 @@ int mpu_interval = 1500;
 long mpu_now = 0;
 long mpu_then = 0;
 
-int rf_interval = 1000;
+int rf_interval = 25;
 long rf_then = 0;
 long rf_now = 0;
 
-int pub_interval = 1000;
+int pub_interval = 5000;
 long pub_then = 0;
 long pub_now = 0;
 
@@ -71,9 +71,9 @@ void setup() {
 
     // START SERIAL
 
-    #ifdef DEBUG
-    Serial.begin(38400);
-    #endif
+
+    //Serial.begin(38400);
+
 
     // initialize device
 
@@ -182,7 +182,7 @@ void loop() {
 
   // SERIAL DEBUGGING
 
-  #ifdef DEBUG
+  /*
   Serial.print("a/g:\t");
   Serial.print(ax); Serial.print("\t");
   Serial.print(ay); Serial.print("\t");
@@ -197,6 +197,6 @@ void loop() {
   Serial.print(hiVal);
   Serial.print(" analogVal: ");
   Serial.println(analogVal);
-  #endif
+  */
 
 }

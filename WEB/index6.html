@@ -1,0 +1,68 @@
+<html>
+	<head>
+		<title>My first Three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script>
+
+			var deviceID = "53ff6e066667574847262367";
+        	var accessToken = "1ffad714fd325c9b78e3aa48534e5afd245b0ba9";
+        	var eventSource = new EventSource("https://api.spark.io/v1/devices/" + deviceID + "/events/?access_token=" + accessToken);
+
+        	eventSource.addEventListener('open', function(e) {
+            console.log("Opened!"); },false);
+
+        	eventSource.addEventListener('error', function(e) {
+            console.log("Errored!"); },false);
+
+            var parsedAcc = 0;
+
+			eventSource.addEventListener('ax', function(e){
+            var parsedAcc = JSON.parse(e.data);
+        	},false);
+
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
+
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+
+			var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+			var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+			var cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+
+			camera.position.z = 5;
+
+			var render = function () {
+				requestAnimationFrame( render );
+
+				cube.rotation.x = parsedAcc;
+				//cube.rotation.y += 0.1;
+
+				renderer.render(scene, camera);
+			};
+
+			render();
+
+			function num2hex(triplet) {
+    			var hex_alphabets = "0123456789ABCDEF";
+    			var hex = "#";
+    			var int1,int2;
+    			for(var i=0;i<3;i++) {
+        			int1 = triplet[i] / 16;
+        			int2 = triplet[i] % 16;
+
+        			hex += hex_alphabets.charAt(int1) + hex_alphabets.charAt(int2); 
+   				 }
+    			return(hex);
+			}
+		</script>
+	</body>
+</html>
